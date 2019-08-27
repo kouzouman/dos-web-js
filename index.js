@@ -1,1 +1,1 @@
-module.exports = require("./src/dos-array.js");
+module.exports = require("./dist/dos-array.js");
