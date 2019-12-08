@@ -49,3 +49,27 @@ _dosCommonJs.default.extendMethod(Array, "toMapFromKeyMapArray", function () {
 _dosCommonJs.default.extendMethod(Array, "asyncMap", async function (mapFunc) {
   return Promise.all(this.map(v => mapFunc(v)));
 });
+/**
+ * 配列をチャンク分けする
+ */
+
+
+_dosCommonJs.default.extendMethod(Array, "chunk", function (length) {
+  if (length <= 0) return this;
+  let result = [];
+  let current = [];
+  this.forEach((v, i) => {
+    current.push(v);
+
+    if (i % length === 0) {
+      result.push(current);
+      current = [];
+    }
+  });
+
+  if (current.length == 0) {
+    result.push(current);
+  }
+
+  return result;
+});
