@@ -61,3 +61,34 @@ cf.extendMethod(Array, "chunk", function(length) {
   }
   return result;
 });
+
+
+
+  /**
+   * Array拡張
+   * 配列のユニーク処理を実施する
+   * @return {Array}
+   */
+cf.extendMethod(Array, "unique", function(getKeyFunc) {
+
+    //  デフォルトはこっち
+    if (!getKeyFunc) {
+      return this.filter(function(x, i, self) {
+        return self.indexOf(x) === i;
+      });
+    }
+
+    //  フィルター用のキーを取得する関数が指定されている場合
+    var result = [];
+    for (var i = 0; i < this.length; i++) {
+      var add = true;
+      for (var h = 0; h < result.length; h++) {
+        if (result[h][getKeyFunc]() === this[i][getKeyFunc]()) {
+          add = false;
+          break;
+        }
+      }
+      if (add) result.push(this[i]);
+    }
+    return result;
+});
