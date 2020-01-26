@@ -1,6 +1,6 @@
 {
   "name": "dos-array-js",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Prototype extension for javascript Array type.",
   "main": "index.js",
   "repository": "https://github.com/kouzouman/dos-array-js.git",
