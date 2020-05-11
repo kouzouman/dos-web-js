@@ -55,19 +55,22 @@ _dosCommonJs.default.extendMethod(Array, "asyncMap", async function (mapFunc) {
 
 
 _dosCommonJs.default.extendMethod(Array, "chunk", function (length) {
+  // return this.length >= length
+  //   ? this
+  //   : [this.slice(0, length), this.slice(length).chunk(length)];
   if (length <= 0) return this;
   let result = [];
   let current = [];
   this.forEach((v, i) => {
     current.push(v);
 
-    if (i % length === 0) {
+    if ((i + 1) % length === 0) {
       result.push(current);
       current = [];
     }
   });
 
-  if (current.length == 0) {
+  if (current.length != 0) {
     result.push(current);
   }
 

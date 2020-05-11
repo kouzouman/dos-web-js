@@ -46,49 +46,51 @@ cf.extendMethod(Array, "asyncMap", async function(mapFunc) {
  * 配列をチャンク分けする
  */
 cf.extendMethod(Array, "chunk", function(length) {
+  // return this.length >= length
+  //   ? this
+  //   : [this.slice(0, length), this.slice(length).chunk(length)];
+
   if (length <= 0) return this;
+
   let result = [];
   let current = [];
   this.forEach((v, i) => {
     current.push(v);
-    if (i % length === 0) {
+    if ((i + 1) % length === 0) {
       result.push(current);
       current = [];
     }
   });
-  if (current.length == 0) {
+  if (current.length != 0) {
     result.push(current);
   }
   return result;
 });
 
-
-
-  /**
-   * Array拡張
-   * 配列のユニーク処理を実施する
-   * @return {Array}
-   */
+/**
+ * Array拡張
+ * 配列のユニーク処理を実施する
+ * @return {Array}
+ */
 cf.extendMethod(Array, "unique", function(getKeyFunc) {
+  //  デフォルトはこっち
+  if (!getKeyFunc) {
+    return this.filter(function(x, i, self) {
+      return self.indexOf(x) === i;
+    });
+  }
 
-    //  デフォルトはこっち
-    if (!getKeyFunc) {
-      return this.filter(function(x, i, self) {
-        return self.indexOf(x) === i;
-      });
-    }
-
-    //  フィルター用のキーを取得する関数が指定されている場合
-    var result = [];
-    for (var i = 0; i < this.length; i++) {
-      var add = true;
-      for (var h = 0; h < result.length; h++) {
-        if (result[h][getKeyFunc]() === this[i][getKeyFunc]()) {
-          add = false;
-          break;
-        }
+  //  フィルター用のキーを取得する関数が指定されている場合
+  var result = [];
+  for (var i = 0; i < this.length; i++) {
+    var add = true;
+    for (var h = 0; h < result.length; h++) {
+      if (result[h][getKeyFunc]() === this[i][getKeyFunc]()) {
+        add = false;
+        break;
       }
-      if (add) result.push(this[i]);
     }
-    return result;
+    if (add) result.push(this[i]);
+  }
+  return result;
 });
