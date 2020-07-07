@@ -96,9 +96,10 @@ _dosCommonJs.default.extendMethod(Array, "unique", function (getKeyFunc) {
 
   for (var i = 0; i < this.length; i++) {
     var add = true;
+    const currentKey = getKeyFunc(this[i]);
 
     for (var h = 0; h < result.length; h++) {
-      if (result[h][getKeyFunc]() === this[i][getKeyFunc]()) {
+      if (getKeyFunc(result[h]) === currentKey) {
         add = false;
         break;
       }
@@ -108,4 +109,17 @@ _dosCommonJs.default.extendMethod(Array, "unique", function (getKeyFunc) {
   }
 
   return result;
-});
+}); // /**
+//  * Array拡張
+//  * 配列から一部を抜き出す
+//  * @return {Array}
+//  */
+// cf.extendMethod(Array, "slice", function (start = 0, length = 0) {
+//   const endIndex = !length ? this.length - start + 1 : length;
+//   console.log(endIndex);
+//   let res = [];
+//   for (let i = start; i < endIndex; i++) {
+//     res.push(this[i]);
+//   }
+//   return res;
+// });

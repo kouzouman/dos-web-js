@@ -3,8 +3,8 @@ import cf from "dos-common-js";
 /**
  * 引数のアイテムを削除
  */
-cf.extendMethod(Array, "removeAt", function(item) {
-  return this.filter(v => {
+cf.extendMethod(Array, "removeAt", function (item) {
+  return this.filter((v) => {
     return item !== v;
   });
 });
@@ -12,7 +12,7 @@ cf.extendMethod(Array, "removeAt", function(item) {
 /**
  * 配列の戦闘を取得
  */
-cf.extendMethod(Array, "first", function(defaultVal = null) {
+cf.extendMethod(Array, "first", function (defaultVal = null) {
   if (this.length == 0) return defaultVal;
   return this[0];
 });
@@ -20,16 +20,16 @@ cf.extendMethod(Array, "first", function(defaultVal = null) {
 /**
  * arrayを複数登録
  */
-cf.extendMethod(Array, "pushAll", function(arr) {
-  arr.forEach(v => this.push(v));
+cf.extendMethod(Array, "pushAll", function (arr) {
+  arr.forEach((v) => this.push(v));
 });
 
 /**
  * key、valueの配列をMapに変更
  */
-cf.extendMethod(Array, "toMapFromKeyMapArray", function() {
+cf.extendMethod(Array, "toMapFromKeyMapArray", function () {
   let result = {};
-  this.forEach(v => {
+  this.forEach((v) => {
     result[v.key] = v.value;
   });
   return result;
@@ -38,14 +38,14 @@ cf.extendMethod(Array, "toMapFromKeyMapArray", function() {
 /**
  * key、valueの配列をMapに変更
  */
-cf.extendMethod(Array, "asyncMap", async function(mapFunc) {
-  return Promise.all(this.map(v => mapFunc(v)));
+cf.extendMethod(Array, "asyncMap", async function (mapFunc) {
+  return Promise.all(this.map((v) => mapFunc(v)));
 });
 
 /**
  * 配列をチャンク分けする
  */
-cf.extendMethod(Array, "chunk", function(length) {
+cf.extendMethod(Array, "chunk", function (length) {
   // return this.length >= length
   //   ? this
   //   : [this.slice(0, length), this.slice(length).chunk(length)];
@@ -72,10 +72,10 @@ cf.extendMethod(Array, "chunk", function(length) {
  * 配列のユニーク処理を実施する
  * @return {Array}
  */
-cf.extendMethod(Array, "unique", function(getKeyFunc) {
+cf.extendMethod(Array, "unique", function (getKeyFunc) {
   //  デフォルトはこっち
   if (!getKeyFunc) {
-    return this.filter(function(x, i, self) {
+    return this.filter(function (x, i, self) {
       return self.indexOf(x) === i;
     });
   }
@@ -84,8 +84,9 @@ cf.extendMethod(Array, "unique", function(getKeyFunc) {
   var result = [];
   for (var i = 0; i < this.length; i++) {
     var add = true;
+    const currentKey = getKeyFunc(this[i]);
     for (var h = 0; h < result.length; h++) {
-      if (result[h][getKeyFunc]() === this[i][getKeyFunc]()) {
+      if (getKeyFunc(result[h]) === currentKey) {
         add = false;
         break;
       }
@@ -94,3 +95,18 @@ cf.extendMethod(Array, "unique", function(getKeyFunc) {
   }
   return result;
 });
+
+// /**
+//  * Array拡張
+//  * 配列から一部を抜き出す
+//  * @return {Array}
+//  */
+// cf.extendMethod(Array, "slice", function (start = 0, length = 0) {
+//   const endIndex = !length ? this.length - start + 1 : length;
+//   console.log(endIndex);
+//   let res = [];
+//   for (let i = start; i < endIndex; i++) {
+//     res.push(this[i]);
+//   }
+//   return res;
+// });
