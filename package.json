@@ -1,20 +1,20 @@
 {
   "name": "dos-array-js",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Prototype extension for javascript Array type.",
   "main": "index.js",
   "repository": "https://github.com/kouzouman/dos-array-js.git",
   "author": "kouzouman <check@doers-square.com>",
   "license": "MIT",
   "dependencies": {
-    "dos-common-js": "^0.2.4"
+    "dos-common-js": "^0.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/register": "^7.11.5",
-    "jest": "^26.4.2"
+    "jest": "^26.5.3"
   },
   "scripts": {
     "test": "jest",

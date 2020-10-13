@@ -75,9 +75,12 @@ cf.extendMethod(Array, "chunk", function (length) {
 cf.extendMethod(Array, "unique", function (getKeyFunc) {
   //  デフォルトはこっち
   if (!getKeyFunc) {
-    return this.filter(function (x, i, self) {
-      return self.indexOf(x) === i;
-    });
+    // return this.filter(function (x, i, self) {
+    //   return self.indexOf(x) === i;
+    // });
+    let res = {};
+    this.forEach((v) => (res[v] = v));
+    return Object.keys(res).map((v) => res[v]);
   }
 
   //  フィルター用のキーを取得する関数が指定されている場合
