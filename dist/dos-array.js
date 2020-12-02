@@ -13,13 +13,22 @@ _dosCommonJs.default.extendMethod(Array, "removeAt", function (item) {
   });
 });
 /**
- * 配列の戦闘を取得
+ * 配列の先頭を取得
  */
 
 
 _dosCommonJs.default.extendMethod(Array, "first", function (defaultVal = null) {
   if (this.length == 0) return defaultVal;
   return this[0];
+});
+/**
+ * 配列の最後尾を取得
+ */
+
+
+_dosCommonJs.default.extendMethod(Array, "last", function (defaultVal = null) {
+  if (this.length == 0) return defaultVal;
+  return this[this.length - 1];
 });
 /**
  * arrayを複数登録

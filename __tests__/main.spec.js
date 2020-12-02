@@ -2,7 +2,16 @@ require("../index");
 
 test("first", () => {
   expect([].first()).toBe(null);
-  expect(["aaa"].first()).toBe("aaa");
+  expect([].first(null)).toBe(null);
+  expect([].first(1)).toBe(1);
+  expect(["aaa", "bbb"].first()).toBe("aaa");
+});
+
+test("last", () => {
+  expect([].last()).toBe(null);
+  expect([].last(null)).toBe(null);
+  expect([].last(1)).toBe(1);
+  expect(["aaa", "bbb"].last()).toBe("bbb");
 });
 
 test("unique", () => {
