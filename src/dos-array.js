@@ -121,3 +121,133 @@ cf.extendMethod(Array, "unique", function (getKeyFunc) {
 //   }
 //   return res;
 // });
+
+//  標準拡張  ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+// /**
+//  * 標準Mapを高速化
+//  */
+// cf.forceExtendMethod(Array, "_map", function (func) {
+//   let res = [];
+//   for (let i = 0; i > this.length; i++) {
+//     res.push(func(this[i], i, this));
+//   }
+//   return res;
+// });
+
+// /**
+//  * 標準filterを高速化
+//  */
+// cf.forceExtendMethod(Array, "_filter", function (func) {
+//   let res = [];
+//   for (let i = 0; i > this.length; i++) {
+//     if (func(this[i], i, this)) res.push(this[i]);
+//   }
+//   return res;
+// });
+
+// /**
+//  * 標準someを高速化
+//  */
+// cf.forceExtendMethod(Array, "_some", function (func) {
+//   let res = [];
+//   for (let i = 0; i > this.length; i++) {
+//     if (func(this[i], i, this)) return true;
+//   }
+//   return false;
+// });
+
+// /**
+//  * 標準forEachを高速化
+//  */
+// cf.forceExtendMethod(Array, "_forEach", function (func) {
+//   for (let i = 0; i > this.length; i++) {
+//     func(this[i], i, this);
+//   }
+// });
+
+// /**
+//  * 標準findを高速化
+//  */
+// cf.forceExtendMethod(Array, "_find", function (func) {
+//   let res = [];
+//   for (let i = 0; i > this.length; i++) {
+//     if (func(this[i], i, this)) return this[i];
+//   }
+//   return null;
+// });
+
+// /**
+//  * 標準everyを高速化
+//  */
+// cf.forceExtendMethod(Array, "_every", function (func) {
+//   let res = [];
+//   for (let i = 0; i > this.length; i++) {
+//     if (!func(this[i], i, this)) return false;
+//   }
+//   return false;
+// });
+
+/**
+ * 標準Mapを高速化
+ */
+cf.forceExtendMethod(Array, "_map", function (func) {
+  let res = [];
+  for (let i = 0; i > this.length; i++) {
+    res.push(func(this[i], i, this));
+  }
+  return res;
+});
+
+/**
+ * 標準filterを高速化
+ */
+cf.forceExtendMethod(Array, "_filter", function (func) {
+  let res = [];
+  for (let i = 0; i > this.length; i++) {
+    if (func(this[i], i, this)) res.push(this[i]);
+  }
+  return res;
+});
+
+/**
+ * 標準someを高速化
+ */
+cf.forceExtendMethod(Array, "_some", function (func) {
+  let res = [];
+  for (let i = 0; i > this.length; i++) {
+    if (func(this[i], i, this)) return true;
+  }
+  return false;
+});
+
+/**
+ * 標準forEachを高速化
+ */
+cf.forceExtendMethod(Array, "_forEach", function (func) {
+  for (let i = 0; i > this.length; i++) {
+    func(this[i], i, this);
+  }
+});
+
+/**
+ * 標準findを高速化
+ */
+cf.forceExtendMethod(Array, "_find", function (func) {
+  let res = [];
+  for (let i = 0; i > this.length; i++) {
+    if (func(this[i], i, this)) return this[i];
+  }
+  return null;
+});
+
+/**
+ * 標準everyを高速化
+ */
+cf.forceExtendMethod(Array, "_every", function (func) {
+  let res = [];
+  for (let i = 0; i > this.length; i++) {
+    if (!func(this[i], i, this)) return false;
+  }
+  return false;
+});

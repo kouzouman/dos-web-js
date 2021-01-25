@@ -33,3 +33,69 @@ test("unique", () => {
     ])
   );
 });
+
+test("array_stds", () => {
+  let targets = [];
+  for (let i = 0; i < 1000000; i++) {
+    targets.push(
+      Math.floor(Math.random() * Math.floor(Number.MAX_SAFE_INTEGER))
+    );
+  }
+
+  const timeChecker = (func) => {
+    const startTime = new Date();
+    func();
+    const endTime = new Date();
+    return endTime - startTime;
+  };
+
+  let resMes = [];
+
+  for (let i = 0; i < 10; i++) {
+    //  map
+    resMes.push(`map: ${timeChecker(() => targets.map((v) => v * 2))}`);
+    resMes.push(`_map: ${timeChecker(() => targets._map((v) => v * 2))}`);
+    //  filter
+    resMes.push(`filter: ${timeChecker(() => targets.filter((v) => v % 2))}`);
+    resMes.push(`_filter: ${timeChecker(() => targets._filter((v) => v % 2))}`);
+    //  some
+    resMes.push(
+      `some: ${timeChecker(() =>
+        targets.some((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+    resMes.push(
+      `_some: ${timeChecker(() =>
+        targets._some((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+    //  forEach
+    resMes.push(`forEach: ${timeChecker(() => targets.forEach((v) => v * 2))}`);
+    resMes.push(
+      `_forEach: ${timeChecker(() => targets._forEach((v) => v * 2))}`
+    );
+    //  find
+    resMes.push(
+      `find: ${timeChecker(() =>
+        targets.find((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+    resMes.push(
+      `_find: ${timeChecker(() =>
+        targets._find((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+    //  every
+    resMes.push(
+      `every: ${timeChecker(() =>
+        targets.every((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+    resMes.push(
+      `_every: ${timeChecker(() =>
+        targets._every((v) => v == targets[(i + 1) * 1000 - 1])
+      )}`
+    );
+  }
+  console.log(resMes.join("\r\n"));
+});
