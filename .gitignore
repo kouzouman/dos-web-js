@@ -1,2 +1,4 @@
 node_modules/
 chromedriver.exe
+selenium.jar
+package-lock.json

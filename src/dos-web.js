@@ -1,4 +1,7 @@
+import { rejects } from "assert";
 import cf from "dos-common-js";
+import fs from "dos-filesystem-js";
+import moment from "moment";
 
 const webdriver = require("selenium-webdriver");
 const { Builder, By, Key, until } = webdriver;
@@ -8,46 +11,57 @@ const { Builder, By, Key, until } = webdriver;
  */
 export default class DosWeb {
   /**
+   * chromeのデフォルト設定
+   * @param {*} conf
+   */
+  getChromeConf(conf = {}) {
+    const defaultConf = {
+      args: [
+        "--headless",
+        "--no-sandbox",
+        "--disable-gpu",
+        "--incognito",
+        `--window-size=1980,1200`,
+      ],
+    };
+    return { ...defaultConf, ...conf };
+  }
+
+  /**
    * コンストラクタ
    * @param {*} browserType
    * @param {*} conf
    */
   constructor(browserType, conf) {
-    this.capabilities = _switch(browserType.toLowerCase())
-      .case("chrome")
-      .then(() => {
-        console.log("chrome ------------------------");
-        const cap = webdriver.Capabilities.chrome();
-        cap.set(
-          "chromeOptions",
-          !!conf
-            ? conf
-            : {
-                args: [
-                  "--headless",
-                  "--no-sandbox",
-                  "--disable-gpu",
-                  "--incognito",
-                  `--window-size=1980,1200`,
-                  // other chrome options
-                ],
-              }
-        );
-        return cap;
-      })
-      .default(() => {
-        console.log("default ------------------------");
-      });
+    this.browserType = browserType.toLowerCase();
+    this.conf = conf;
   }
 
   /**
    * 初期化
    */
   async init() {
+    this.capabilities = _switch(this.browserType)
+      .case("chrome")
+      .then(() => {
+        console.log("chrome ------------------------");
+        const cap = webdriver.Capabilities.chrome();
+        this.conf = this.getChromeConf(this.conf);
+        cap.set("chromeOptions", this.conf);
+        return cap;
+      })
+      .default(() => {
+        console.log("default ------------------------");
+      });
+
     //  ブラウザの初期化
-    this.driver = await new Builder()
-      .withCapabilities(this.capabilities)
-      .build();
+    const cap = new Builder().withCapabilities(this.capabilities);
+    try {
+      this.driver = await cap.build();
+    } catch (e) {
+      await this.versionUpDriver();
+      this.driver = await cap.build();
+    }
   }
 
   /**
@@ -88,8 +102,54 @@ export default class DosWeb {
   /**
    * BodyのHTML情報を取得
    */
-  async getBody() {
+  async getOuterHtml() {
     return await this.driver.getPageSource();
+  }
+
+  /**
+   * innerTextを取得
+   */
+  async getInnerText() {
+    const bodyElement = await this.querySelectorWithWait("body");
+    const bodyText = await bodyElement.getText();
+    console.log(bodyText);
+
+    const chromeXmlBody = await this.querySelector(
+      "#webkit-xml-viewer-source-xml"
+    );
+    if (!!chromeXmlBody.getText) {
+      console.log("要素あり");
+      const body = await chromeXmlBody.getText();
+      console.log(body);
+      console.log("========================");
+      return body;
+    }
+    // console.log("chromeXmlBody----------" + chromeXmlBody);
+    return bodyText;
+  }
+
+  /**
+   * 最近ダウンロードしたテキストを解析
+   */
+  async getRecentDownText(downDir = "", withDelete = false) {
+    if (!downDir) downDir = this.conf.download.default_directory;
+
+    const flist = await fs.getFileList(downDir);
+    // console.log(flist[0]);
+    const sorted = flist
+      .sort((a, b) => (moment(a.stats.mtime) > moment(b.stats.mtime) ? 1 : -1))
+      .reverse();
+    if (sorted.length == 0) return "";
+    const lastFile = sorted[0];
+
+    const fData = await fs.readText(lastFile.item);
+    // console.log(fData);
+
+    if (withDelete) {
+      await fs.delete(lastFile.item);
+    }
+
+    return fData;
   }
 
   //  その他  --------------------------
@@ -154,6 +214,40 @@ export default class DosWeb {
       action.perform();
     };
 
+    // /**
+    //  * innerTextを取得
+    //  */
+    // element.getInnerText = async () => {
+    //   const body =
+    // }
+
     return element;
+  }
+
+  /**
+   * ブラウザドライバのバージョンチェック
+   */
+  async versionUpDriver() {
+    switch (this.browserType) {
+      case "chrome":
+        await this.versionUpChromeDriver();
+        break;
+    }
+  }
+
+  /**
+   * Chromeドライバのバージョンを上げる
+   */
+  async versionUpChromeDriver() {
+    return new Promise((resolve, reject) => {
+      const seleniumDownloader = require("selenium-download");
+      seleniumDownloader.ensure(process.cwd(), (error) => {
+        if (error) {
+          return reject(error);
+        } else {
+          return resolve(true);
+        }
+      });
+    });
   }
 }

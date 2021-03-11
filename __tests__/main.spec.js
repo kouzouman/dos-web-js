@@ -1,8 +1,28 @@
 const DosWeb = require("../index").default;
 
 test("first", async (done) => {
-  const browser = new DosWeb("chrome");
+  // console.log(process.cwd());
+
+  const browser = new DosWeb("chrome", {
+    download: {
+      prompt_for_download: false,
+      directory_upgrade: true,
+      default_directory: __dirname + "\\..\\data",
+    },
+  });
   await browser.init();
+
+  // await browser.move(
+  //   "http://www.nomadworks.co.jp/htmlsample/archive/win/sec2/info01.zip"
+  // );
+  // const body = await browser.getRecentDownText(
+  //   `C:\\Users\\kou\\Downloads`,
+  //   true
+  // );
+  // console.log(body);
+  // await browser.quit();
+  // done();
+  // return;
 
   await browser.move("https://www.google.com/");
 
@@ -10,24 +30,10 @@ test("first", async (done) => {
   await qbox.setValueWithEnter("検索語");
 
   await browser.sleep(1000);
-  const body = await browser.getBody();
-  expect(body).not.toBe("");
+  // const body = await browser.getInnerText();
+  // expect(body).not.toBe("");
   // await qbox.inputEnter();
   await browser.quit();
   done();
   return;
-
-  // const logImage = await browser.querySelector("img.lnXdpd");
-  // logImage.areaClick();
-
-  // const search = await browser.querySelector('[name="btnK"]');
-  // console.log(search);
-  // search.areaClick();
-
-  // await browser.quit();
-
-  // expect([].first()).toBe(null);
-  // expect([].first(null)).toBe(null);
-  // expect([].first(1)).toBe(1);
-  // expect(["aaa", "bbb"].first()).toBe("aaa");
 });
