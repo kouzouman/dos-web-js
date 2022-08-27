@@ -28,10 +28,15 @@ const {
  */
 
 class DosWeb {
+  getKeys() {
+    return Key;
+  }
   /**
    * chromeのデフォルト設定
    * @param {*} conf
    */
+
+
   getChromeConf(conf = {}) {
     const defaultConf = {
       args: ["--headless", "--no-sandbox", "--disable-gpu", "--incognito", `--window-size=1980,1200`]
@@ -56,7 +61,7 @@ class DosWeb {
    */
 
 
-  async init() {
+  async init(option) {
     this.capabilities = _switch(this.browserType).case("chrome").then(() => {
       console.log("chrome ------------------------");
       const cap = webdriver.Capabilities.chrome();
@@ -74,7 +79,8 @@ class DosWeb {
     } catch (e) {
       await this.versionUpDriver();
       this.driver = await cap.build();
-    }
+    } // this.driver.setWindowSize(100, 200);
+
   }
   /**
    * ブラウザの終了
@@ -92,6 +98,14 @@ class DosWeb {
   async move(url) {
     return await this.driver.get(url);
   }
+
+  getManager() {
+    return this.driver.manage();
+  }
+
+  getWindow() {
+    return this.driver.manage().window();
+  }
   /**
    * CSSクエリセレクタで要素を取得
    * @param {*} selector
@@ -101,6 +115,16 @@ class DosWeb {
   async querySelector(selector) {
     const element = await this.driver.findElement(By.css(selector));
     return this._elementWrapper(element);
+  }
+  /**
+   * CSSクエリセレクタで要素を取得
+   * @param {*} selector
+   */
+
+
+  async querySelectorAll(selector) {
+    const element = await this.driver.findElements(By.css(selector));
+    return element.map(v => this._elementWrapper(v));
   }
   /**
    * CSSクエリセレクタで要素の出現を待ってから取得
@@ -187,7 +211,7 @@ class DosWeb {
 
 
   async saveScreenShot(filePath) {
-    const base64 = this.getScreenShot();
+    const base64 = await this.getScreenShot();
     const buf = Buffer.from(base64, "base64");
 
     const {
@@ -209,7 +233,7 @@ class DosWeb {
      * 値を設定する
      */
     element.setValue = async value => {
-      this.driver.wait(element.sendKeys(value));
+      return Promise.resolve(this.driver.wait(element.sendKeys(value)));
     };
     /**
      * Enterキーを押下
@@ -218,7 +242,7 @@ class DosWeb {
 
     element.setValueWithEnter = async value => {
       // console.log(webdriver.Key);
-      this.driver.wait(element.sendKeys(value, Key.ENTER));
+      return Promise.resolve(this.driver.wait(element.sendKeys(value, Key.ENTER)));
     };
     /**
      * エレメントではなくエレメントの領域をクリックする
@@ -230,6 +254,11 @@ class DosWeb {
       action.move_to_element_with_offset(element, 5, 5);
       action.click();
       action.perform();
+    };
+
+    element.getInnerText = async () => {
+      const res = await this.driver.executeScript("return arguments[0].innerText", element);
+      return res;
     }; // /**
     //  * innerTextを取得
     //  */

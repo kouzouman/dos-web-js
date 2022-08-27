@@ -10,6 +10,10 @@ const { Builder, By, Key, until } = webdriver;
  * DosWeb
  */
 export default class DosWeb {
+  getKeys() {
+    return Key;
+  }
+
   /**
    * chromeのデフォルト設定
    * @param {*} conf
@@ -40,7 +44,7 @@ export default class DosWeb {
   /**
    * 初期化
    */
-  async init() {
+  async init(option) {
     this.capabilities = _switch(this.browserType)
       .case("chrome")
       .then(() => {
@@ -62,6 +66,8 @@ export default class DosWeb {
       await this.versionUpDriver();
       this.driver = await cap.build();
     }
+
+    // this.driver.setWindowSize(100, 200);
   }
 
   /**
@@ -78,6 +84,14 @@ export default class DosWeb {
     return await this.driver.get(url);
   }
 
+  getManager() {
+    return this.driver.manage();
+  }
+
+  getWindow() {
+    return this.driver.manage().window();
+  }
+
   /**
    * CSSクエリセレクタで要素を取得
    * @param {*} selector
@@ -85,6 +99,15 @@ export default class DosWeb {
   async querySelector(selector) {
     const element = await this.driver.findElement(By.css(selector));
     return this._elementWrapper(element);
+  }
+
+  /**
+   * CSSクエリセレクタで要素を取得
+   * @param {*} selector
+   */
+  async querySelectorAll(selector) {
+    const element = await this.driver.findElements(By.css(selector));
+    return element.map((v) => this._elementWrapper(v));
   }
 
   /**
@@ -174,7 +197,7 @@ export default class DosWeb {
    * @param {*} filePath
    */
   async saveScreenShot(filePath) {
-    const base64 = this.getScreenShot();
+    const base64 = await this.getScreenShot();
     const buf = Buffer.from(base64, "base64");
 
     const { promisify } = require("util");
@@ -192,7 +215,7 @@ export default class DosWeb {
      * 値を設定する
      */
     element.setValue = async (value) => {
-      this.driver.wait(element.sendKeys(value));
+      return Promise.resolve(this.driver.wait(element.sendKeys(value)));
     };
 
     /**
@@ -201,7 +224,9 @@ export default class DosWeb {
     element.setValueWithEnter = async (value) => {
       // console.log(webdriver.Key);
 
-      this.driver.wait(element.sendKeys(value, Key.ENTER));
+      return Promise.resolve(
+        this.driver.wait(element.sendKeys(value, Key.ENTER))
+      );
     };
 
     /**
@@ -212,6 +237,14 @@ export default class DosWeb {
       action.move_to_element_with_offset(element, 5, 5);
       action.click();
       action.perform();
+    };
+
+    element.getInnerText = async () => {
+      const res = await this.driver.executeScript(
+        "return arguments[0].innerText",
+        element
+      );
+      return res;
     };
 
     // /**
